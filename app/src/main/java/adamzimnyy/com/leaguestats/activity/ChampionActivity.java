@@ -1,52 +1,77 @@
 package adamzimnyy.com.leaguestats.activity;
 
+import adamzimnyy.com.leaguestats.api.RetrofitBuilder;
+import adamzimnyy.com.leaguestats.api.constant.Server;
+import adamzimnyy.com.leaguestats.api.endpoint.MasteryService;
+import adamzimnyy.com.leaguestats.fragment.GraphsFragment;
+import adamzimnyy.com.leaguestats.fragment.MatchesFragment;
+import adamzimnyy.com.leaguestats.fragment.StatsFragment;
 import adamzimnyy.com.leaguestats.model.realm.Champion;
-import adamzimnyy.com.leaguestats.model.realm.Score;
+import adamzimnyy.com.leaguestats.model.realm.ChampionMastery;
+import adamzimnyy.com.leaguestats.util.SizeChangeListener;
+import adamzimnyy.com.leaguestats.view.CustomPager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import adamzimnyy.com.leaguestats.R;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Size;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v7.view.menu.MenuItemImpl;
+import android.util.Log;
+import android.view.*;
 import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.formatter.DefaultValueFormatter;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import io.realm.Realm;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ChampionActivity extends SwipeBackActivity {
-    String key;
-    String name;
-    @BindView(R.id.mastery_chart)
-    BarChart masteryChart;
+    Champion champion;
+    String championKey;
     @BindView(R.id.art)
     ImageView art;
     @BindView(R.id.name)
     TextView nameText;
 
+    @BindView(R.id.view_pager)
+    CustomPager viewPager;
+    SectionsPagerAdapter adapter;
+
+    @BindView(R.id.navigation)
+    BottomNavigationView bottomNavigationView;
+
+    @BindView(R.id.mastery)
+    ImageView mastery;
+
+    public void setMastery(int level) {
+        switch (level) {
+            case 6:
+                ImageLoader.getInstance().displayImage("drawable://" + R.drawable.mastery6, mastery); break;
+            case 7:
+                ImageLoader.getInstance().displayImage("drawable://" + R.drawable.mastery7, mastery); break;
+        }
+        mastery.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_right);
+        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_right);
     }
 
     @Override
@@ -54,70 +79,136 @@ public class ChampionActivity extends SwipeBackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_champion);
         ButterKnife.bind(this);
-        key = getIntent().getExtras().getString("key");
-        name = getIntent().getExtras().getString("name");
-        nameText.setText(name);
-        Realm.getDefaultInstance().where(Champion.class).contains("key", key).findFirst().getImage();
-        ImageLoader loader =ImageLoader.getInstance();
-        loader.displayImage("http://ddragon.leagueoflegends.com/cdn/img/champion/splash/"+key+"_0.jpg",art);
-        makeMasteryChart();
+        championKey = (String) getIntent().getSerializableExtra("extra");
+        champion = Realm.getDefaultInstance().where(Champion.class).equalTo("key", championKey).findFirst();
+        nameText.setText(champion.getName());
+        Realm.getDefaultInstance().where(Champion.class).contains("key", champion.getKey()).findFirst().getImage();
+        ImageLoader loader = ImageLoader.getInstance();
+        loader.displayImage("http://ddragon.leagueoflegends.com/cdn/img/champion/splash/" + champion.getKey() + "_0.jpg", art);
+
+        setupViewPager();
     }
 
-    private void makeMasteryChart() {
-        Realm realm = Realm.getDefaultInstance();
-        Champion champion = realm.where(Champion.class).contains("key", getIntent().getStringExtra("key")).findFirst();
-        List<Integer> scores = champion.getScore().getAsList();
-        List<BarEntry> entries = new ArrayList<>();
-        int c = 0;
-        //  for (Integer i : scores) {
-        //      entries.add(new BarEntry(c++, i));
-        //  }
-        entries.add(new BarEntry(c++, 40));
-        entries.add(new BarEntry(c++, 16));
+    private void setupViewPager() {
+        adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        viewPager.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent e) {
+                // How far the user has to scroll before it locks the parent vertical scrolling.
+                final int margin = 10;
+                final int fragmentOffset = v.getScrollX() % v.getWidth();
 
-        entries.add(new BarEntry(c++, 2));
-        entries.add(new BarEntry(c++, 5));
+                if (fragmentOffset > margin && fragmentOffset < v.getWidth() - margin) {
+                    viewPager.getParent().getParent().requestDisallowInterceptTouchEvent(true);
+                }
+                return false;
+            }
+        });
+        viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(2);
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.navigation_stats:
+                                viewPager.setCurrentItem(0);
+                                break;
+                            case R.id.navigation_graphs:
+                                viewPager.setCurrentItem(1);
+                                break;
+                            case R.id.navigation_matches:
+                                viewPager.setCurrentItem(2);
+                                break;
+                        }
+                        return true;
+                    }
+                });
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
-        entries.add(new BarEntry(c++, 11));
-        entries.add(new BarEntry(c++, 17));
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
 
-        BarDataSet dataSet = new BarDataSet(entries, "Label");
-        dataSet.setColor(R.color.colorAccent);
-        masteryChart.setData(new BarData(dataSet));
-        masteryChart.getData().setValueFormatter(new DefaultValueFormatter(0));
-        XAxis xAxis = masteryChart.getXAxis();
-        xAxis.setGranularity(1f);
-        xAxis.setAxisMinimum(-0.5f);
-        xAxis.setAxisMaximum(13.5f);
-        xAxis.setLabelCount(14);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setValueFormatter(new XAxisValueFormatter());
-        xAxis.setDrawGridLines(false);
-        masteryChart.getAxisRight().setEnabled(false);
-        masteryChart.getAxisLeft().setAxisMinimum(0);
-        masteryChart.getAxisLeft().setEnabled(false);
-        masteryChart.setDrawGridBackground(false);
-        masteryChart.getLegend().setEnabled(false);
-        masteryChart.getDescription().setEnabled(false);
-        masteryChart.setPinchZoom(false);
-        masteryChart.setScaleEnabled(true);
-        masteryChart.setDoubleTapToZoomEnabled(false);
-        masteryChart.invalidate();
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                if (state == ViewPager.SCROLL_STATE_SETTLING || state == ViewPager.SCROLL_STATE_IDLE) {
+                    updateNavigationBarState(viewPager.getCurrentItem());
+
+                }
+            }
+        });
     }
 
-    public class XAxisValueFormatter implements IAxisValueFormatter {
+    private void updateNavigationBarState(int position) {
+        Menu menu = bottomNavigationView.getMenu();
 
-        private String[] mValues = {"D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+", "S-", "S", "S+"};
+        for (int i = 0, size = menu.size(); i < size; i++) {
+            MenuItem item = menu.getItem(i);
+            ((MenuItemImpl) item).setExclusiveCheckable(false);
+            item.setChecked(i == position);
+            ((MenuItemImpl) item).setExclusiveCheckable(true);
+        }
+    }
 
-        public XAxisValueFormatter() {
 
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        private List<Fragment> fragments;
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+            this.fragments = new ArrayList<>();
+            fragments.add(StatsFragment.newInstance(championKey, viewPager));
+            fragments.add(GraphsFragment.newInstance(championKey, viewPager));
+            fragments.add(MatchesFragment.newInstance(championKey, viewPager));
+
+            viewPager.measureFragments(fragments);
         }
 
         @Override
-        public String getFormattedValue(float value, AxisBase axis) {
-            // "value" represents the position of the label on the axis (x or y)
-            return mValues[(int) value];
+        public Fragment getItem(int position) {
+            return fragments.get(position);
         }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "SECTION 1";
+                case 1:
+                    return "SECTION 2";
+                case 2:
+                    return "SECTION 3";
+            }
+            return null;
+        }
+
+        private int mCurrentPosition = -1;
+
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            super.setPrimaryItem(container, position, object);
+            if (position != mCurrentPosition) {
+                Fragment fragment = (Fragment) object;
+                CustomPager pager = (CustomPager) container;
+                if (fragment != null && fragment.getView() != null) {
+                    mCurrentPosition = position;
+                    pager.setView(fragment.getView());
+                }
+            }
+        }
+
+
     }
+
 }

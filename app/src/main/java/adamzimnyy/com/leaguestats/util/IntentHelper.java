@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import java.io.Serializable;
+
 /**
  * Created by AKiniyalocts on 2/23/15.
  *
@@ -27,6 +29,12 @@ public class IntentHelper {
     public static void startActivityIntent(Activity source, Class<? extends Activity> nextActivity, Bundle bundle){
         Intent i = new Intent(source,nextActivity);
         i.putExtras(bundle);
+        source.startActivity(i);
+    }
+
+    public static void startActivityIntent(Activity source, Class<? extends Activity> nextActivity, Serializable object){
+        Intent i = new Intent(source,nextActivity);
+        i.putExtra("extra",object);
         source.startActivity(i);
     }
 }

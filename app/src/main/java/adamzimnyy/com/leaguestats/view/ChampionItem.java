@@ -2,6 +2,7 @@ package adamzimnyy.com.leaguestats.view;
 
 import adamzimnyy.com.leaguestats.R;
 import adamzimnyy.com.leaguestats.api.RetrofitBuilder;
+import adamzimnyy.com.leaguestats.model.realm.Champion;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,14 +14,35 @@ import com.nostra13.universalimageloader.core.display.CircleBitmapDisplayer;
 
 import java.util.List;
 
-/**
- * Created by adamz on 26.03.2017.
- */
 public class ChampionItem extends AbstractItem<ChampionItem, ChampionItem.ViewHolder> {
     public String name;
     public String key;
     public String image;
     public boolean pinned;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public boolean isPinned() {
+        return pinned;
+    }
+
+    public void setPinned(boolean pinned) {
+        this.pinned = pinned;
+    }
 
     @Override
     public boolean equals(Object o) {

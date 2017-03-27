@@ -3,18 +3,21 @@ package adamzimnyy.com.leaguestats.activity;
 import adamzimnyy.com.leaguestats.R;
 import adamzimnyy.com.leaguestats.api.RetrofitBuilder;
 import adamzimnyy.com.leaguestats.api.endpoint.StaticDataService;
+import adamzimnyy.com.leaguestats.api.endpoint.SummonerService;
 import adamzimnyy.com.leaguestats.model.realm.Champion;
 import adamzimnyy.com.leaguestats.model.realm.Score;
 import adamzimnyy.com.leaguestats.model.riot.ChampionList;
 import adamzimnyy.com.leaguestats.model.riot.Image;
+import adamzimnyy.com.leaguestats.model.riot.Summoner;
 import adamzimnyy.com.leaguestats.util.ImageLoaderHelper;
 import adamzimnyy.com.leaguestats.util.IntentHelper;
+import adamzimnyy.com.leaguestats.util.Preference;
 import adamzimnyy.com.leaguestats.util.Riot;
 import adamzimnyy.com.leaguestats.view.ChampionItem;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -41,6 +44,7 @@ import io.realm.*;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -68,9 +72,11 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
         setSupportActionBar(toolbar);
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        tipCard.setVisibility(sharedPref.getBoolean("hide_pin_tip", false) ? View.GONE : View.VISIBLE);
-        Log.d("onCreate", "onCreate Called");
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if (sharedPref.contains(Preference.SUMMONERS_NAME)){
+            Log.d("sharedPref",sharedPref.getString(Preference.SUMMONERS_NAME,"dupa"));
+            findSummonerId();}
+        tipCard.setVisibility(sharedPref.getBoolean(Preference.SHOW_PIN_TIP, false) ? View.VISIBLE : View.GONE);
         GridLayoutManager glm = new GridLayoutManager(MainActivity.this, 4);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(glm);
@@ -79,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         fastAdapter.withFilterPredicate(new IItemAdapter.Predicate<ChampionItem>() {
             @Override
             public boolean filter(ChampionItem item, CharSequence constraint) {
-                Log.d("filter", String.valueOf(constraint));
                 String[] parts = String.valueOf(constraint).split("\\|");
                 String filter;
                 if (parts.length > 1) {
@@ -89,13 +94,13 @@ public class MainActivity extends AppCompatActivity {
                 }
                 Log.d("filter", Arrays.toString(parts));
                 if (parts[0].equals("true") && filter.isEmpty()) {
-                    return !item.pinned;
+                    return !item.isPinned();
                 } else if (parts[0].equals("true")) {
                     return !item.getName().toLowerCase().startsWith(filter.toLowerCase())
-                          /*  !filter.toLowerCase().contains(item.getName().toLowerCase()))*/ || !item.pinned;
+                          /*  !filter.toLowerCase().contains(item.getRegion().toLowerCase()))*/ || !item.isPinned();
                 } else {
                     return !item.getName().toLowerCase().startsWith(filter.toLowerCase()) /*&&
-                            !filter.toLowerCase().contains(item.getName().toLowerCase())*/;
+                            !filter.toLowerCase().contains(item.getRegion().toLowerCase())*/;
                 }
             }
         });
@@ -104,11 +109,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onClick(View v, IAdapter adapter, IItem item, int position) {
                 ChampionItem ci = (ChampionItem) item;
-                Bundle bundle = new Bundle();
-                bundle.putString("key",ci.getKey());
-                bundle.putString("name",ci.getName());
-                IntentHelper.startActivityIntent(MainActivity.this, TabbedActivity.class,bundle);
-                overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_right);
+                IntentHelper.startActivityIntent(MainActivity.this, ChampionActivity.class, ci.getKey());
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_right);
                 return false;
             }
         });
@@ -116,14 +118,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onLongClick(View v, IAdapter adapter, IItem item, int position) {
                 ChampionItem ci = (ChampionItem) item;
-                ci.getKey();
                 Realm realm = Realm.getDefaultInstance();
                 Champion c = realm.where(Champion.class).contains("key", ci.getKey()).findFirst();
                 realm.beginTransaction();
                 c.setPinned(!c.isPinned());
                 realm.commitTransaction();
                 realm.close();
-                ci.pinned = !ci.pinned;
+                ci.setPinned(!ci.isPinned());
                 fastAdapter.notifyAdapterItemChanged(position);
                 return false;
             }
@@ -156,24 +157,64 @@ public class MainActivity extends AppCompatActivity {
         Realm.init(this);
 
 
-
         //TODO remove when done
         RealmConfiguration config = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
-       //  downloadChampionList();
+       /* Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.deleteAll();
+            }
+        });*/
 
-
-
-        championList = getChampionList();
-        fastAdapter.add(championList);
-        fastAdapter.notifyAdapterDataSetChanged();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                championList = getChampionList();
+                fastAdapter.add(championList);
+                fastAdapter.notifyAdapterDataSetChanged();
+            }
+        }, 500);
         checkForLeagueUpdates();
 
 //set our adapters to the RecyclerView
 //we wrap our FastAdapter inside the ItemAdapter -> This allows us to chain adapters for more complex useCases
         recyclerView.setAdapter(fastAdapter);
+    }
+
+    private void findSummonerId() {
+        SummonerService service = (SummonerService) RetrofitBuilder.getService(SummonerService.class, RetrofitBuilder.RIOT_BASE);
+        String region = PreferenceManager.getDefaultSharedPreferences(this).getString(Preference.SERVER, "");
+        String name = PreferenceManager.getDefaultSharedPreferences(this).getString(Preference.SUMMONERS_NAME, "");
+        if (region.isEmpty()) return;
+        service.byName(region, name, Riot.API_KEY).enqueue(new Callback<Map<String,Summoner>>() {
+            @Override
+            public void onResponse(Call<Map<String,Summoner>> call, Response<Map<String,Summoner>> response) {
+                if (response.isSuccessful()) {
+                    Map<String,Summoner> map = response.body();
+                    if(map.size() != 1) return;
+                    Summoner s = null;
+                    for (Map.Entry<String, Summoner> e: map.entrySet())
+                    {
+                        s  = e.getValue();
+                    }
+
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putInt(Preference.SUMMONERS_ID, (int) s.getId());
+                    editor.apply();
+                    Log.d("sharedPref","saved ID: "+(int) s.getId());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String,Summoner>> call, Throwable t) {
+
+            }
+        });
     }
 
     /**
@@ -189,10 +230,10 @@ public class MainActivity extends AppCompatActivity {
         List<ChampionItem> items = new ArrayList<>();
         for (Champion c : champions) {
             ChampionItem item = new ChampionItem();
-            item.key = c.getKey();
-            item.name = c.getName();
-            item.image = c.getImage().getFull();
-            item.pinned = c.isPinned();
+            item.setPinned(c.isPinned());
+            item.setImage(c.getImage().getFull());
+            item.setKey(c.getKey());
+            item.setName(c.getName());
             items.add(item);
         }
         return items;
@@ -248,8 +289,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (id == R.id.action_settings) {
-            IntentHelper.startActivityIntent(this,SettingsActivity.class);
-            overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_right);
+            IntentHelper.startActivityIntent(this, SettingsActivity.class);
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_right);
             return true;
         }
 
@@ -259,15 +300,15 @@ public class MainActivity extends AppCompatActivity {
     private class AlphabetComparatorAscending implements Comparator<ChampionItem>, Serializable {
         @Override
         public int compare(ChampionItem lhs, ChampionItem rhs) {
-            return lhs.key.compareTo(rhs.key);
+            return lhs.getKey().compareTo(rhs.getKey());
         }
     }
 
     @OnClick(R.id.close_tip)
     public void closeTip() {
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean("hide_pin_tip", true);
+        editor.putBoolean("show_pin_tip", false);
         editor.apply();
         tipCard.setVisibility(View.GONE);
     }
@@ -288,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
             }
             if (response.isSuccessful()) {
                 String latest = response.body().get(0);
-                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                 if (!sharedPref.getString("lol_version", "").equals(latest)) {
                     needsUpdate[0] = true;
                     Log.d("version", "update needed");
@@ -317,6 +358,8 @@ public class MainActivity extends AppCompatActivity {
                         if (champion == null) {
                             champion = realm.createObject(Champion.class, ec.getKey());
                             champion.setName(ec.getName());
+                            champion.setId(ec.getId());
+                            Log.d("champion","Set id "+ec.getId()+" on "+ec.getName());
                             champion.setImage(realm.createObject(Image.class));
                             champion.getImage().setFull(ec.getImage().getFull());
                             champion.setScore(realm.createObject(Score.class));

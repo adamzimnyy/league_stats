@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="server_names">
+        <item>North America</item>
+        <item>Europe West</item>
+        <item>Europe Nordic East</item>
+        <item>Oceania</item>
+        <item>Brazil</item>
+        <item>Korea</item>
+        <item>Japan</item>
+        <item>LAS</item>
+        <item>LAN</item>
+        <item>Russia</item>
+        <item>Turkey</item>
+    </string-array>
+
+    <string-array name="server_values">
+        <item>na</item>
+        <item>euw</item>
+        <item>eune</item>
+        <item>oce</item>
+        <item>br</item>
+        <item>kr</item>
+        <item>jp</item>
+        <item>las</item>
+        <item>lan</item>
+        <item>ru</item>
+        <item>tr</item>
+    </string-array>
+</resources>

@@ -1,33 +1,57 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Account">
+        <EditTextPreference
+                android:key="summoners_name"
+                android:title="Summoner's name"
+                android:selectAllOnFocus="true"
+                android:inputType="text"
+                android:singleLine="true"
+                android:maxLines="1"/>
+        <ListPreference
+                android:key="server"
+                android:title="Server"
+                android:defaultValue="-1"
+                android:entries="@array/server_names"
+                android:entryValues="@array/server_values"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"/>
+    </PreferenceCategory>
 
-    <SwitchPreference
-            android:key="example_switch"
-            android:title="@string/pref_title_social_recommendations"
-            android:summary="@string/pref_description_social_recommendations"
-            android:defaultValue="true"/>
 
-    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
-    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <PreferenceCategory android:title="Notifications">
+        <SwitchPreference
+                android:key="scan_for_games"
+                android:title="Scan for new matches"
+                android:summary="Check for new games in your match history that don't have registered mastery score."
+                android:defaultValue="true"/>
+        <EditTextPreference
+                android:key="scan_interval"
+                android:title="Scan interval in minutes"
+                android:inputType="number"
+                android:singleLine="true"
+                android:maxLines="1"/>
+        <SwitchPreference
+                android:key="notify_new_game"
+                android:title="Notification"
+                android:summary="Send a notification reminding to save your score if untracked game is found."
+                android:defaultValue="true"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Help">
+        <SwitchPreference
+                android:key="show_pin_tip"
+                android:title="Pins tip"
+                android:summary="Show tip about champion pins."
+                android:defaultValue="true"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Other">
+
+
+    </PreferenceCategory>
+
     <EditTextPreference
-            android:key="example_text"
-            android:title="Summoner's name"
-            android:defaultValue="@string/pref_default_display_name"
-            android:selectAllOnFocus="true"
-            android:inputType="textCapWords"
-            android:capitalize="words"
-            android:singleLine="true"
-            android:maxLines="1"/>
-
-    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
-         dismiss it. -->
-    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
-    <ListPreference
-            android:key="example_list"
-            android:title="@string/pref_title_add_friends_to_messages"
-            android:defaultValue="-1"
-            android:entries="@array/pref_example_list_titles"
-            android:entryValues="@array/pref_example_list_values"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"/>
-
+            android:key="lol_version"
+            android:title="League of Legends version"
+           />
 </PreferenceScreen>

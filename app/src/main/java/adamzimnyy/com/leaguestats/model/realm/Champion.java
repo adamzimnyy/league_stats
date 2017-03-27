@@ -4,11 +4,13 @@ import adamzimnyy.com.leaguestats.model.riot.Image;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
+import java.io.Serializable;
+
 /**
  * Created by adamz on 26.03.2017.
  */
 
-public class Champion extends RealmObject {
+public class Champion extends RealmObject implements Serializable{
 
     @PrimaryKey
     String key;

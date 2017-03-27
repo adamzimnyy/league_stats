@@ -15,7 +15,8 @@ public class RetrofitBuilder {
 
 
 
-    public static final String BASE_URL = "http://mafia-test-env-java.eu-central-1.elasticbeanstalk.com/";
+    public static final String RIOT_BASE = "https://eune.api.riotgames.com/api/lol/";
+    public static final String RIOT_MASTERY = "https://eune.api.riotgames.com/championmastery/";
     public static final String RIOT_IMAGE ="http://ddragon.leagueoflegends.com/cdn/7.6.1/img/";
     public static final String RIOT_STATIC_DATA ="https://global.api.riotgames.com/api/lol/static-data/eune/v1.2/";
     public static final String LOCALHOST = "http://192.168.0.108:8080";
