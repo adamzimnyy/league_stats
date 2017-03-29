@@ -5,7 +5,7 @@ import adamzimnyy.com.leaguestats.api.RetrofitBuilder;
 import adamzimnyy.com.leaguestats.api.endpoint.StaticDataService;
 import adamzimnyy.com.leaguestats.api.endpoint.SummonerService;
 import adamzimnyy.com.leaguestats.model.realm.Champion;
-import adamzimnyy.com.leaguestats.model.realm.Score;
+import adamzimnyy.com.leaguestats.util.Score;
 import adamzimnyy.com.leaguestats.model.riot.ChampionList;
 import adamzimnyy.com.leaguestats.model.riot.Image;
 import adamzimnyy.com.leaguestats.model.riot.Summoner;
@@ -44,7 +44,6 @@ import io.realm.*;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 import java.io.IOException;
 import java.io.Serializable;

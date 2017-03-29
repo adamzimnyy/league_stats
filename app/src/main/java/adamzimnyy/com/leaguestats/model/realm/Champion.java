@@ -1,6 +1,7 @@
 package adamzimnyy.com.leaguestats.model.realm;
 
 import adamzimnyy.com.leaguestats.model.riot.Image;
+import adamzimnyy.com.leaguestats.util.Score;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
