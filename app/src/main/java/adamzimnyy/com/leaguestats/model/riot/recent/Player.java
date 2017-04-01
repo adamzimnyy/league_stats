@@ -14,32 +14,35 @@
  * limitations under the License.
  */
 
-package adamzimnyy.com.leaguestats.model.riot.match;
+package adamzimnyy.com.leaguestats.model.riot.recent;
 
-import io.realm.RealmList;
 import io.realm.RealmObject;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
-public class Frame extends RealmObject implements Serializable {
 
-	private static final long serialVersionUID = 4359409042534560829L;
-    private RealmList<Event> events;
-//	private Map<String, ParticipantFrame> participantFrames;
-	private long timestamp;
+public class Player extends RealmObject implements Serializable {
 
-	public RealmList<Event> getEvents() {		return events;	}
+	private static final long serialVersionUID = -2222223068241891011L;
 
-	//public Map<String, ParticipantFrame> getParticipantFrames() {		return participantFrames;	}
+	private int championId;
+	private long summonerId;
+	private int teamId;
 
-	public long getTimestamp() {
-		return timestamp;
+	public int getChampionId() {
+		return championId;
+	}
+
+	public long getSummonerId() {
+		return summonerId;
+	}
+
+	public int getTeamId() {
+		return teamId;
 	}
 
 	@Override
 	public String toString() {
-		return String.valueOf(getTimestamp());
+		return String.valueOf(getSummonerId());
 	}
 }

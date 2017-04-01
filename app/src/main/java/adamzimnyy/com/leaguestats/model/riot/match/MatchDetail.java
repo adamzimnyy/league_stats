@@ -16,6 +16,7 @@
 
 package adamzimnyy.com.leaguestats.model.riot.match;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 
 import java.io.Serializable;
@@ -24,86 +25,84 @@ import java.util.List;
 
 public class MatchDetail extends RealmObject implements Serializable {
 
-	private static final long serialVersionUID = 2606895296338330266L;
+    private static final long serialVersionUID = 2606895296338330266L;
 
-	private int mapId;
-	private long matchCreation;
-	private long matchDuration;
-	private long matchId;
-	private String matchMode;
-	private String matchType;
-	private String matchVersion;
-	private List<ParticipantIdentity> participantIdentities;
-	private List<Participant> participants;
-	private String platformId;
-	private String queueType;
-	private String region;
-	private String season;
-	private List<Team> teams;
-	private Timeline timeline;
+    private int mapId;
+    private long matchCreation;
+    private long matchDuration;
+    private long matchId;
+    private String matchMode;
+    private String matchType;
+    private String matchVersion;
+    private RealmList<ParticipantIdentity> participantIdentities;
+    private RealmList<Participant> participants;
+    private String platformId;
+    private String queueType;
+    private String region;
+    private String season;
+    private RealmList<Team> teams;
+  //  private Timeline timeline;
 
-	public int getMapId() {
-		return mapId;
-	}
+    public int getMapId() {
+        return mapId;
+    }
 
-	public long getMatchCreation() {
-		return matchCreation;
-	}
+    public long getMatchCreation() {
+        return matchCreation;
+    }
 
-	public long getMatchDuration() {
-		return matchDuration;
-	}
+    public long getMatchDuration() {
+        return matchDuration;
+    }
 
-	public long getMatchId() {
-		return matchId;
-	}
+    public long getMatchId() {
+        return matchId;
+    }
 
-	public String getMatchMode() {
-		return matchMode;
-	}
+    public String getMatchMode() {
+        return matchMode;
+    }
 
-	public String getMatchType() {
-		return matchType;
-	}
+    public String getMatchType() {
+        return matchType;
+    }
 
-	public String getMatchVersion() {
-		return matchVersion;
-	}
+    public String getMatchVersion() {
+        return matchVersion;
+    }
 
-	public List<ParticipantIdentity> getParticipantIdentities() {
-		return participantIdentities;
-	}
+    public RealmList<ParticipantIdentity> getParticipantIdentities() {
+        return participantIdentities;
+    }
 
-	public List<Participant> getParticipants() {
-		return participants;
-	}
+    public RealmList<Participant> getParticipants() {
+        return participants;
+    }
 
-	public String getPlatformId() {
-		return platformId;
-	}
+    public String getPlatformId() {
+        return platformId;
+    }
 
-	public String getQueueType() {
-		return queueType;
-	}
+    public String getQueueType() {
+        return queueType;
+    }
 
-	public String getRegion() {
-		return region;
-	}
+    public String getRegion() {
+        return region;
+    }
 
-	public String getSeason() {
-		return season;
-	}
+    public String getSeason() {
+        return season;
+    }
 
-	public List<Team> getTeams() {
-		return teams;
-	}
+    public RealmList<Team> getTeams() {
+        return teams;
+    }
 
-	public Timeline getTimeline() {
-		return timeline;
-	}
+   // public Timeline getTimeline() {        return timeline;    }
 
-	@Override
-	public String toString() {
-		return String.valueOf(getMatchId());
-	}
+    @Override
+    public String toString() {
+        return String.valueOf(getMatchId());
+    }
 }

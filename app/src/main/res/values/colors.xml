@@ -13,4 +13,7 @@
     <color name="masteryBackground">#061d33</color>
     <color name="colorMasteryLight">#58cef2</color>
     <color name="colorMasteryDark">#164263</color>
+    <color name="colorSaveButtonGreen">#77c924</color>
+
+    <color name="verySlightyGrey">#efefef</color>
 </resources>

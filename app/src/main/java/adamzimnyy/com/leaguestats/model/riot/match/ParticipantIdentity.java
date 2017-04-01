@@ -26,13 +26,13 @@ public class ParticipantIdentity extends RealmObject implements Serializable {
 	private static final long serialVersionUID = 7750317217073991764L;
 
 	private int participantId;
-	private Player player;
+	private MatchPlayer player;
 
 	public int getParticipantId() {
 		return participantId;
 	}
 
-	public Player getPlayer() {
+	public MatchPlayer getPlayer() {
 		return player;
 	}
 

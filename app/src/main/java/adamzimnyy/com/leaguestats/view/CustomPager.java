@@ -2,10 +2,12 @@ package adamzimnyy.com.leaguestats.view;
 
 import adamzimnyy.com.leaguestats.util.SizeChangeListener;
 import android.content.Context;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.List;

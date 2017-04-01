@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-package adamzimnyy.com.leaguestats.model.riot.match;
-
-import io.realm.RealmObject;
+package adamzimnyy.com.leaguestats.model.riot.recent;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
-public class Timeline extends RealmObject implements Serializable {
 
-	private static final long serialVersionUID = 3888184958883394435L;
+public class RecentGames implements Serializable {
 
-	private long frameInterval;
-//	private List<Frame> frames;
+	private static final long serialVersionUID = -4659064262999503692L;
 
-	public long getFrameInterval() {
-		return frameInterval;
+	private Set<Game> games;
+	private long summonerId;
+
+	public Set<Game> getGames() {
+		return games;
 	}
 
-//	public List<Frame> getFrames() {		return frames;	}
-
-	@Override
-	public String toString() {
-		return String.valueOf(getFrameInterval());
+	public long getSummonerId() {
+		return summonerId;
 	}
 }

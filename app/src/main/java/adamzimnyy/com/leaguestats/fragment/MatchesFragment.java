@@ -3,23 +3,36 @@ package adamzimnyy.com.leaguestats.fragment;
 
 import adamzimnyy.com.leaguestats.model.realm.Champion;
 import adamzimnyy.com.leaguestats.util.SizeChangeListener;
+import adamzimnyy.com.leaguestats.view.ChampionItem;
 import adamzimnyy.com.leaguestats.view.CustomPager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import adamzimnyy.com.leaguestats.R;
+import android.widget.EditText;
+import butterknife.BindView;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MatchesFragment extends Fragment {
-String key;
+    String key;
     SizeChangeListener listener;
+
+    @BindView(R.id.recycler)
+    RecyclerView recyclerView;
+    FastItemAdapter fastAdapter;
+    List<ChampionItem> championList = new ArrayList<>();
 
     public SizeChangeListener getListener() {
         return listener;
@@ -38,7 +51,7 @@ String key;
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         view.measure(0, View.MeasureSpec.UNSPECIFIED);
-        if(listener!= null)    listener.onSizeChanged();
+        if (listener != null) listener.onSizeChanged();
     }
 
     @Override

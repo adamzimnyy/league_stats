@@ -16,30 +16,38 @@
 
 package adamzimnyy.com.leaguestats.model.riot.match;
 
-import io.realm.RealmList;
 import io.realm.RealmObject;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
-public class Frame extends RealmObject implements Serializable {
 
-	private static final long serialVersionUID = 4359409042534560829L;
-    private RealmList<Event> events;
-//	private Map<String, ParticipantFrame> participantFrames;
-	private long timestamp;
+public class MatchPlayer extends RealmObject implements Serializable {
 
-	public RealmList<Event> getEvents() {		return events;	}
+	private static final long serialVersionUID = -4459702825178547603L;
 
-	//public Map<String, ParticipantFrame> getParticipantFrames() {		return participantFrames;	}
+	private String matchHistoryUri;
+	private int profileIcon;
+	private long summonerId;
+	private String summonerName;
 
-	public long getTimestamp() {
-		return timestamp;
+	public String getMatchHistoryUri() {
+		return matchHistoryUri;
+	}
+
+	public int getProfileIcon() {
+		return profileIcon;
+	}
+
+	public long getSummonerId() {
+		return summonerId;
+	}
+
+	public String getSummonerName() {
+		return summonerName;
 	}
 
 	@Override
 	public String toString() {
-		return String.valueOf(getTimestamp());
+		return getSummonerName();
 	}
 }

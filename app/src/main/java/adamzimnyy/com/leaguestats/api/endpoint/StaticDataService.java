@@ -14,7 +14,8 @@ import java.util.List;
 public interface StaticDataService {
 
     @GET("champion")
-    Call<ChampionList> getChampionList(@Query("champData") String data, @Query("api_key") String apiKey);
+    Call<ChampionList> getChampionList(@Query("champData") String data,
+                                       @Query("api_key") String apiKey);
 
     @GET("versions")
     Call<List<String>> versions(@Query("api_key") String key);

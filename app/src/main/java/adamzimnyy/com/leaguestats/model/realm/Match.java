@@ -1,19 +1,123 @@
 package adamzimnyy.com.leaguestats.model.realm;
 
 import adamzimnyy.com.leaguestats.model.riot.match.MatchDetail;
+import adamzimnyy.com.leaguestats.model.riot.recent.Game;
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by adamz on 29.03.2017.
  */
 
-public class Match extends RealmObject{
+public class Match extends RealmObject {
 
-    public MatchDetail detail;
+    @PrimaryKey
+    private long id;
+    private Game game;
+    boolean blueSide;
+    boolean win;
+    String mode;
+    int kills,deaths,assists;
+    int map;
+    private int championId;
+    private String championKey;
+    private int score;
 
-    /**
-     * Rating for match ranging from D to S+
-     */
-    public int score;
+    public String getChampionKey() {
+        return championKey;
+    }
+
+    public void setChampionKey(String championKey) {
+        this.championKey = championKey;
+    }
+
+    public int getMap() {
+        return map;
+    }
+
+    public void setMap(int map) {
+        this.map = map;
+    }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public void setKills(int kills) {
+        this.kills = kills;
+    }
+
+    public int getDeaths() {
+        return deaths;
+    }
+
+    public void setDeaths(int deaths) {
+        this.deaths = deaths;
+    }
+
+    public int getAssists() {
+        return assists;
+    }
+
+    public void setAssists(int assists) {
+        this.assists = assists;
+    }
+
+
+    public boolean isBlueSide() {
+        return blueSide;
+    }
+
+    public void setBlueSide(boolean blueSide) {
+        this.blueSide = blueSide;
+    }
+
+    public boolean isWin() {
+        return win;
+    }
+
+    public void setWin(boolean win) {
+        this.win = win;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setChampionId(int championId) {
+        this.championId = championId;
+    }
+
+    public int getChampionId() {
+        return championId;
+    }
 }

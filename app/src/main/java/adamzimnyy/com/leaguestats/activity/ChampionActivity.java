@@ -1,43 +1,33 @@
 package adamzimnyy.com.leaguestats.activity;
 
-import adamzimnyy.com.leaguestats.api.RetrofitBuilder;
-import adamzimnyy.com.leaguestats.api.constant.Server;
-import adamzimnyy.com.leaguestats.api.endpoint.MasteryService;
 import adamzimnyy.com.leaguestats.fragment.GraphsFragment;
 import adamzimnyy.com.leaguestats.fragment.MatchesFragment;
 import adamzimnyy.com.leaguestats.fragment.StatsFragment;
 import adamzimnyy.com.leaguestats.model.realm.Champion;
-import adamzimnyy.com.leaguestats.model.realm.ChampionMastery;
-import adamzimnyy.com.leaguestats.util.SizeChangeListener;
+import adamzimnyy.com.leaguestats.view.AddMatchDialog;
 import adamzimnyy.com.leaguestats.view.CustomPager;
-import android.os.AsyncTask;
+import adamzimnyy.com.leaguestats.view.CustomScrollView;
 import android.os.Bundle;
 import adamzimnyy.com.leaguestats.R;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Size;
-import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.view.menu.MenuItemImpl;
-import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import butterknife.OnClick;
+import com.github.clans.fab.FloatingActionButton;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import io.realm.Realm;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ChampionActivity extends SwipeBackActivity {
@@ -58,12 +48,32 @@ public class ChampionActivity extends SwipeBackActivity {
     @BindView(R.id.mastery)
     ImageView mastery;
 
+    @BindView(R.id.scroll_view)
+    CustomScrollView scrollView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_champion);
+        ButterKnife.bind(this);
+
+        championKey = (String) getIntent().getSerializableExtra("extra");
+        champion = Realm.getDefaultInstance().where(Champion.class).equalTo("key", championKey).findFirst();
+        nameText.setText(champion.getName());
+        Realm.getDefaultInstance().where(Champion.class).contains("key", champion.getKey()).findFirst().getImage();
+        ImageLoader loader = ImageLoader.getInstance();
+        loader.displayImage("http://ddragon.leagueoflegends.com/cdn/img/champion/splash/" + champion.getKey() + "_0.jpg", art);
+        setupViewPager();
+    }
+
     public void setMastery(int level) {
         switch (level) {
             case 6:
-                ImageLoader.getInstance().displayImage("drawable://" + R.drawable.mastery6, mastery); break;
+                ImageLoader.getInstance().displayImage("drawable://" + R.drawable.mastery6, mastery);
+                break;
             case 7:
-                ImageLoader.getInstance().displayImage("drawable://" + R.drawable.mastery7, mastery); break;
+                ImageLoader.getInstance().displayImage("drawable://" + R.drawable.mastery7, mastery);
+                break;
         }
         mastery.setVisibility(View.VISIBLE);
     }
@@ -72,21 +82,6 @@ public class ChampionActivity extends SwipeBackActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_right);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_champion);
-        ButterKnife.bind(this);
-        championKey = (String) getIntent().getSerializableExtra("extra");
-        champion = Realm.getDefaultInstance().where(Champion.class).equalTo("key", championKey).findFirst();
-        nameText.setText(champion.getName());
-        Realm.getDefaultInstance().where(Champion.class).contains("key", champion.getKey()).findFirst().getImage();
-        ImageLoader loader = ImageLoader.getInstance();
-        loader.displayImage("http://ddragon.leagueoflegends.com/cdn/img/champion/splash/" + champion.getKey() + "_0.jpg", art);
-
-        setupViewPager();
     }
 
     private void setupViewPager() {
@@ -104,6 +99,7 @@ public class ChampionActivity extends SwipeBackActivity {
             }
         });
         viewPager.setAdapter(adapter);
+        //    viewPager.setSheetBehavior(sheetBehavior);
         viewPager.setOffscreenPageLimit(2);
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -210,5 +206,4 @@ public class ChampionActivity extends SwipeBackActivity {
 
 
     }
-
 }

@@ -17,6 +17,7 @@
 package adamzimnyy.com.leaguestats.model.riot.match;
 
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 
 import java.io.Serializable;
@@ -27,7 +28,7 @@ public class Event extends RealmObject implements Serializable {
 	private static final long serialVersionUID = -2911353385877952457L;
 
 	private String ascendedType;
-	private List<Integer> assistingParticipantIds;
+//	private List<Integer> assistingParticipantIds;
 	private String buildingType;
 	private int creatorId;
 	private String eventType;
@@ -53,9 +54,9 @@ public class Event extends RealmObject implements Serializable {
 		return ascendedType;
 	}
 
-	public List<Integer> getAssistingParticipantIds() {
+	/*public List<Integer> getAssistingParticipantIds() {
 		return assistingParticipantIds;
-	}
+	}*/
 
 	public String getBuildingType() {
 		return buildingType;

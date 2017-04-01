@@ -14,6 +14,8 @@ import retrofit2.http.Query;
 public interface MasteryService {
 
     @GET("location/{location}/player/{playerId}/champion/{championId}")
-    Call<ChampionMastery> getSingleChampionMastery(@Path("location") String location, @Path("playerId") int summonerId,
-                                                   @Path("championId") int championId, @Query("api_key") String apiKey);
+    Call<ChampionMastery> getSingleChampionMastery(@Path("location") String location,
+                                                   @Path("playerId") int summonerId,
+                                                   @Path("championId") int championId,
+                                                   @Query("api_key") String apiKey);
 }

@@ -2,7 +2,6 @@ package adamzimnyy.com.leaguestats.view;
 
 import adamzimnyy.com.leaguestats.R;
 import adamzimnyy.com.leaguestats.api.RetrofitBuilder;
-import adamzimnyy.com.leaguestats.model.realm.Champion;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,11 +9,14 @@ import android.widget.TextView;
 import com.mikepenz.fastadapter.items.AbstractItem;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.CircleBitmapDisplayer;
 
 import java.util.List;
 
-public class ChampionItem extends AbstractItem<ChampionItem, ChampionItem.ViewHolder> {
+/**
+ * Created by adamz on 30.03.2017.
+ */
+
+public class MatchItem extends AbstractItem<MatchItem, MatchItem.ViewHolder> {
     public String name;
     public String key;
     public String image;
@@ -81,8 +83,9 @@ public class ChampionItem extends AbstractItem<ChampionItem, ChampionItem.ViewHo
         //set the text for the name
         viewHolder.name.setText(name);
         //set the text for the description or hide
-       ImageLoader.getInstance().displayImage(RetrofitBuilder.RIOT_IMAGE + "champion/" + image, viewHolder.image);
-        viewHolder.pin.setVisibility(pinned? View.VISIBLE : View.GONE);
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader.displayImage(RetrofitBuilder.RIOT_IMAGE + "champion/" + image, viewHolder.image);
+        viewHolder.pin.setVisibility(pinned ? View.VISIBLE : View.GONE);
     }
 
     //reset the view here (this is an optional method, but recommended)

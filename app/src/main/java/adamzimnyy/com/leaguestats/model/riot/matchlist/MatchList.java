@@ -14,40 +14,39 @@
  * limitations under the License.
  */
 
-package adamzimnyy.com.leaguestats.model.riot.match;
-
-import io.realm.RealmObject;
+package adamzimnyy.com.leaguestats.model.riot.matchlist;
 
 import java.io.Serializable;
+import java.util.List;
 
 
-public class Player extends RealmObject implements Serializable {
+public class MatchList  implements Serializable {
 
-	private static final long serialVersionUID = -4459702825178547603L;
+	private static final long serialVersionUID = 939383850419752274L;
 
-	private String matchHistoryUri;
-	private int profileIcon;
-	private long summonerId;
-	private String summonerName;
+	private int endIndex;
+	private List<MatchReference> matches;
+	private int startIndex;
+	private int totalGames;
 
-	public String getMatchHistoryUri() {
-		return matchHistoryUri;
+	public int getEndIndex() {
+		return endIndex;
 	}
 
-	public int getProfileIcon() {
-		return profileIcon;
+	public int getStartIndex() {
+		return startIndex;
 	}
 
-	public long getSummonerId() {
-		return summonerId;
+	public int getTotalGames() {
+		return totalGames;
 	}
 
-	public String getSummonerName() {
-		return summonerName;
+	public List<MatchReference> getMatches() {
+		return matches;
 	}
 
 	@Override
 	public String toString() {
-		return getSummonerName();
+		return "[" + getStartIndex() + "," + getEndIndex() + "]";
 	}
 }

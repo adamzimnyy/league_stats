@@ -25,7 +25,7 @@ public class Team extends RealmObject implements Serializable {
 
 	private static final long serialVersionUID = -3414402914522684688L;
 
-	private List<BannedChampion> bans;
+//	private List<BannedChampion> bans;
 	private int baronKills;
 	private int dominionVictoryScore;
 	private int dragonKills;
@@ -42,9 +42,7 @@ public class Team extends RealmObject implements Serializable {
 	private int vilemawKills;
 	private boolean winner;
 
-	public List<BannedChampion> getBans() {
-		return bans;
-	}
+//	public List<BannedChampion> getBans() {		return bans;	}
 
 	public int getBaronKills() {
 		return baronKills;

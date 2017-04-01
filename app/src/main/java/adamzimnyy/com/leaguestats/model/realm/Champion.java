@@ -45,8 +45,6 @@ public class Champion extends RealmObject implements Serializable{
         this.image = image;
     }
 
-    Score score = new Score();
-
     public String getKey() {
         return key;
     }
@@ -63,11 +61,4 @@ public class Champion extends RealmObject implements Serializable{
         this.name = name;
     }
 
-    public Score getScore() {
-        return score;
-    }
-
-    public void setScore(Score score) {
-        this.score = score;
-    }
 }

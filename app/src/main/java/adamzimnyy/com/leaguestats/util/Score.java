@@ -9,7 +9,7 @@ import java.util.*;
  * Created by adamz on 26.03.2017.
  */
 
-public class Score extends RealmObject {
+public class Score{
     public static final int D = 0;
     public static final int D_PLUS = 1;
     public static final int C_MINUS = 2;

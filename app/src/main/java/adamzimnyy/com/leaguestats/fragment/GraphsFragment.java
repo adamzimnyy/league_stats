@@ -3,6 +3,7 @@ package adamzimnyy.com.leaguestats.fragment;
 
 import adamzimnyy.com.leaguestats.activity.ChampionActivity;
 import adamzimnyy.com.leaguestats.model.realm.Champion;
+import adamzimnyy.com.leaguestats.model.realm.Match;
 import adamzimnyy.com.leaguestats.util.SizeChangeListener;
 import adamzimnyy.com.leaguestats.view.CustomPager;
 import android.os.Bundle;
@@ -66,7 +67,7 @@ public class GraphsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         view.measure(0, View.MeasureSpec.UNSPECIFIED);
-      if(listener!= null)  listener.onSizeChanged();
+        if (listener != null) listener.onSizeChanged();
     }
 
     @Override
@@ -82,23 +83,17 @@ public class GraphsFragment extends Fragment {
 
     private void makeMasteryChart() {
         Realm realm = Realm.getDefaultInstance();
-        Champion champion = realm.where(Champion.class).contains("key", championKey).findFirst();
-        List<Integer> scores = champion.getScore().getAsList();
+        Champion champion = realm.where(Champion.class).equalTo("key", championKey).findFirst();
+        List<Match> matches = realm.where(Match.class).equalTo("championId", champion.getId()).findAll();
+        int[] scores = new int[14];
+        for (Match m : matches) {
+            scores[m.getScore()]++;
+        }
         List<BarEntry> entries = new ArrayList<>();
-        int c = 0;
-        //  for (Integer i : scores) {
-        //      entries.add(new BarEntry(c++, i));
-        //  }
-        entries.add(new BarEntry(c++, 40));
-        entries.add(new BarEntry(c++, 16));
 
-        entries.add(new BarEntry(c++, 2));
-        entries.add(new BarEntry(c++, 5));
-
-        entries.add(new BarEntry(c++, 11));
-        entries.add(new BarEntry(c++, 17));
-
-
+        for (int i = 0; i < 14; i++) {
+            entries.add(new BarEntry(i, scores[i]));
+        }
         BarDataSet dataSet = new BarDataSet(entries, "Label");
         dataSet.setColor(R.color.colorAccent);
         masteryChart.setData(new BarData(dataSet));
@@ -132,7 +127,7 @@ public class GraphsFragment extends Fragment {
 
     public class XAxisValueFormatter implements IAxisValueFormatter {
 
-        private String[] mValues = {"D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+", "S-", "S", "S+"};
+        private String[] mValues = {"D", " D+", " C-", "C", " C+", " B-", "B", " B+", " A-", "A", " A+", " S-", "S", " S+"};
 
         public XAxisValueFormatter() {
 

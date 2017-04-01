@@ -15,5 +15,7 @@ import java.util.Map;
 public interface SummonerService {
 
     @GET("{region}/v1.4/summoner/by-name/{name}")
-    Call<Map<String,Summoner>> byName(@Path("region")String region, @Path("name") String name, @Query("api_key") String apiKey);
+    Call<Map<String,Summoner>> byName(@Path("region")String region,
+                                      @Path("name") String name,
+                                      @Query("api_key") String apiKey);
 }

@@ -5,6 +5,7 @@ import adamzimnyy.com.leaguestats.api.RetrofitBuilder;
 import adamzimnyy.com.leaguestats.api.endpoint.StaticDataService;
 import adamzimnyy.com.leaguestats.api.endpoint.SummonerService;
 import adamzimnyy.com.leaguestats.model.realm.Champion;
+import adamzimnyy.com.leaguestats.task.GetMostRecentMatchTask;
 import adamzimnyy.com.leaguestats.util.Score;
 import adamzimnyy.com.leaguestats.model.riot.ChampionList;
 import adamzimnyy.com.leaguestats.model.riot.Image;
@@ -13,6 +14,7 @@ import adamzimnyy.com.leaguestats.util.ImageLoaderHelper;
 import adamzimnyy.com.leaguestats.util.IntentHelper;
 import adamzimnyy.com.leaguestats.util.Preference;
 import adamzimnyy.com.leaguestats.util.Riot;
+import adamzimnyy.com.leaguestats.view.AddMatchDialog;
 import adamzimnyy.com.leaguestats.view.ChampionItem;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -30,6 +32,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.tip_card)
     CardView tipCard;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         Realm.init(this);
 
 
-        //TODO remove when done
+        //TODO ------->  Database Migration reset, remove when done !!!!!!!!!!!
         RealmConfiguration config = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
                 .build();
@@ -238,40 +242,11 @@ public class MainActivity extends AppCompatActivity {
         return items;
     }
 
-    private void downloadChampionList() {
-        StaticDataService service = (StaticDataService) RetrofitBuilder.getService(StaticDataService.class, RetrofitBuilder.RIOT_STATIC_DATA);
-        Call<ChampionList> call = service.getChampionList("image", Riot.API_KEY);
-        call.enqueue(new Callback<ChampionList>() {
-            @Override
-            public void onResponse(Call<ChampionList> call, Response<ChampionList> response) {
-                if (response.isSuccessful()) {
-                    Map<String, Champion> map = response.body().getData();
-                    Realm realm = Realm.getDefaultInstance();
-                    realm.beginTransaction();
-                    for (Map.Entry<String, Champion> entry : map.entrySet()) {
-                        Champion ec = entry.getValue();
 
-                        Champion champion = realm.where(Champion.class).contains("key", entry.getValue().getKey()).findFirst();
-                        if (champion == null) {
-                            champion = realm.createObject(Champion.class, ec.getKey());
-                            champion.setName(ec.getName());
-                            champion.setImage(realm.createObject(Image.class));
-                            champion.getImage().setFull(ec.getImage().getFull());
-                            champion.setScore(realm.createObject(Score.class));
-                        }
-                    }
-                    realm.commitTransaction();
-                    realm.close();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ChampionList> call, Throwable t) {
-
-            }
-        });
+    @OnClick(R.id.button_add_new_match)
+    public void onAddNewMatch(){
+        new AddMatchDialog().setActivity(this).show();
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -361,7 +336,6 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("champion","Set id "+ec.getId()+" on "+ec.getName());
                             champion.setImage(realm.createObject(Image.class));
                             champion.getImage().setFull(ec.getImage().getFull());
-                            champion.setScore(realm.createObject(Score.class));
                         }
                     }
                     realm.commitTransaction();
@@ -385,3 +359,39 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
+
+
+/*
+    private void downloadChampionList() {
+        StaticDataService service = (StaticDataService) RetrofitBuilder.getService(StaticDataService.class, RetrofitBuilder.RIOT_STATIC_DATA);
+        Call<ChampionList> call = service.getChampionList("image", Riot.API_KEY);
+        call.enqueue(new Callback<ChampionList>() {
+            @Override
+            public void onResponse(Call<ChampionList> call, Response<ChampionList> response) {
+                if (response.isSuccessful()) {
+                    Map<String, Champion> map = response.body().getData();
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    for (Map.Entry<String, Champion> entry : map.entrySet()) {
+                        Champion ec = entry.getValue();
+
+                        Champion champion = realm.where(Champion.class).contains("key", entry.getValue().getKey()).findFirst();
+                        if (champion == null) {
+                            champion = realm.createObject(Champion.class, ec.getKey());
+                            champion.setName(ec.getName());
+                            champion.setImage(realm.createObject(Image.class));
+                            champion.getImage().setFull(ec.getImage().getFull());
+                        }
+                    }
+                    realm.commitTransaction();
+                    realm.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ChampionList> call, Throwable t) {
+
+            }
+        });
+    }
+*/
