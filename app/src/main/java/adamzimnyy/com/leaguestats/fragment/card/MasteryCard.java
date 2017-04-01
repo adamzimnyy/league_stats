@@ -72,10 +72,10 @@ public class MasteryCard extends Fragment {
         key = fragment.getKey();
         Log.d("keyyy", "key MasteryCard onCreateView = "+fragment.getKey());
         Champion champion = Realm.getDefaultInstance().where(Champion.class).equalTo("key", key).findFirst();
+
         getMastery(champion);
         return v;
     }
-
 
     private void getMastery(Champion champion) {
         MasteryService service = (MasteryService) RetrofitBuilder.getService(MasteryService.class, RetrofitBuilder.RIOT_MASTERY);
@@ -90,7 +90,6 @@ public class MasteryCard extends Fragment {
                 if (response.isSuccessful()) {
                     if (response.code() == 200) drawMasteryCard(response.body());
                     if (response.code() == 204) drawMasteryCard(null);
-
                 }
             }
 

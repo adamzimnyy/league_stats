@@ -64,7 +64,6 @@ public class Match extends RealmObject {
         this.assists = assists;
     }
 
-
     public boolean isBlueSide() {
         return blueSide;
     }
@@ -119,5 +118,20 @@ public class Match extends RealmObject {
 
     public int getChampionId() {
         return championId;
+    }
+
+    public void init(Game game){
+        Champion champion = Realm.getDefaultInstance().where(Champion.class).equalTo("id", game.getChampionId()).findFirst();
+        setWin(game.getStats().isWin());
+        setAssists(game.getStats().getAssists());
+        setMode(game.getSubType());
+        setKills(game.getStats().getChampionsKilled());
+        setDeaths(game.getStats().getNumDeaths());
+        setGame(game);
+        setBlueSide(game.getTeamId() == 100);
+        setMap(game.getMapId());
+        setChampionId(game.getChampionId());
+        setId(game.getGameId());
+        setChampionKey(champion != null ? champion.getKey() : "");
     }
 }

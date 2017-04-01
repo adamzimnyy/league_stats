@@ -57,7 +57,7 @@ dependencies {
     compile 'com.android.support:support-v4:25.3.0'
     compile 'com.github.clans:fab:1.6.4'
     compile 'org.honorato.multistatetogglebutton:multistatetogglebutton:0.2.2'
-
+    compile 'com.synnapps:carouselview:0.0.10'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }

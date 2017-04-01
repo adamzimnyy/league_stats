@@ -29,11 +29,10 @@ import java.io.IOException;
 public class GetMostRecentMatchTask extends AsyncTask<Void, Void, Match> {
 
     private Context context;
-    private AddMatchDialog dialog;
 
 
-    public GetMostRecentMatchTask(AddMatchDialog addMatchDialog, Context context) {
-        this.dialog = addMatchDialog;
+    public GetMostRecentMatchTask(Context context) {
+
         this.context = context;
     }
 
@@ -56,17 +55,7 @@ public class GetMostRecentMatchTask extends AsyncTask<Void, Void, Match> {
             game = recentResponse.body().getGames().iterator().next();
             Champion champion = Realm.getDefaultInstance().where(Champion.class).equalTo("id", game.getChampionId()).findFirst();
             Match match = new Match();
-            match.setWin(game.getStats().isWin());
-            match.setAssists(game.getStats().getAssists());
-            match.setMode(game.getSubType());
-            match.setKills(game.getStats().getChampionsKilled());
-            match.setDeaths(game.getStats().getNumDeaths());
-            match.setGame(game);
-            match.setBlueSide(game.getTeamId() == 100);
-            match.setMap(game.getMapId());
-            match.setChampionId(game.getChampionId());
-            match.setId(game.getGameId());
-            match.setChampionKey(champion != null ? champion.getKey() : "");
+            match.init(game);
             return match;
         }
         return null;
@@ -74,6 +63,5 @@ public class GetMostRecentMatchTask extends AsyncTask<Void, Void, Match> {
 
     @Override
     protected void onPostExecute(Match match) {
-        dialog.display(match);
     }
 }

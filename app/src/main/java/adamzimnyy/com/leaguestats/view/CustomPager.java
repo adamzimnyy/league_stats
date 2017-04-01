@@ -39,7 +39,7 @@ public class CustomPager extends ViewPager implements SizeChangeListener {
                 if (h > maxHeight)
                     maxHeight = h;
             } else {
-                Log.e("measure", "view is null");
+                Log.e("measure", "root is null");
             }
         }*/
         // currentView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
@@ -76,7 +76,7 @@ public class CustomPager extends ViewPager implements SizeChangeListener {
                 if (h > maxHeight)
                     maxHeight = h;
             } else {
-                Log.e("measure", "view is null");
+                Log.e("measure", "root is null");
             }
         }
     }

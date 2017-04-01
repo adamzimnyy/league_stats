@@ -2,6 +2,7 @@ package adamzimnyy.com.leaguestats.fragment;
 
 
 import adamzimnyy.com.leaguestats.activity.ChampionActivity;
+import adamzimnyy.com.leaguestats.fragment.card.GraphCard;
 import adamzimnyy.com.leaguestats.model.realm.Champion;
 import adamzimnyy.com.leaguestats.model.realm.Match;
 import adamzimnyy.com.leaguestats.util.SizeChangeListener;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import adamzimnyy.com.leaguestats.R;
+import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.github.mikephil.charting.charts.BarChart;
@@ -37,7 +39,8 @@ public class GraphsFragment extends Fragment {
 
     String championKey;
     SizeChangeListener listener;
-
+    @BindView(R.id.root)
+LinearLayout root;
     public SizeChangeListener getListener() {
         return listener;
     }
@@ -54,14 +57,11 @@ public class GraphsFragment extends Fragment {
         this.championKey = championKey;
     }
 
-    @BindView(R.id.mastery_chart)
-    BarChart masteryChart;
-
+    GraphCard masteryChart;
 
     public GraphsFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -75,48 +75,14 @@ public class GraphsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_graphs, container, false);
+        masteryChart = new GraphCard(getContext());
         ButterKnife.bind(this, v);
-
-        makeMasteryChart();
+        masteryChart.setChampionKey(championKey);
+        masteryChart.makeMasteryChart();
+        root.addView(masteryChart);
         return v;
     }
 
-    private void makeMasteryChart() {
-        Realm realm = Realm.getDefaultInstance();
-        Champion champion = realm.where(Champion.class).equalTo("key", championKey).findFirst();
-        List<Match> matches = realm.where(Match.class).equalTo("championId", champion.getId()).findAll();
-        int[] scores = new int[14];
-        for (Match m : matches) {
-            scores[m.getScore()]++;
-        }
-        List<BarEntry> entries = new ArrayList<>();
-
-        for (int i = 0; i < 14; i++) {
-            entries.add(new BarEntry(i, scores[i]));
-        }
-        BarDataSet dataSet = new BarDataSet(entries, "Label");
-        dataSet.setColor(R.color.colorAccent);
-        masteryChart.setData(new BarData(dataSet));
-        masteryChart.getData().setValueFormatter(new DefaultValueFormatter(0));
-        XAxis xAxis = masteryChart.getXAxis();
-        xAxis.setGranularity(1f);
-        xAxis.setAxisMinimum(-0.5f);
-        xAxis.setAxisMaximum(13.5f);
-        xAxis.setLabelCount(14);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setValueFormatter(new GraphsFragment.XAxisValueFormatter());
-        xAxis.setDrawGridLines(false);
-        masteryChart.getAxisRight().setEnabled(false);
-        masteryChart.getAxisLeft().setAxisMinimum(0);
-        masteryChart.getAxisLeft().setEnabled(false);
-        masteryChart.setDrawGridBackground(false);
-        masteryChart.getLegend().setEnabled(false);
-        masteryChart.getDescription().setEnabled(false);
-        masteryChart.setPinchZoom(false);
-        masteryChart.setScaleEnabled(true);
-        masteryChart.setDoubleTapToZoomEnabled(false);
-        masteryChart.invalidate();
-    }
 
     public static Fragment newInstance(String key, CustomPager viewPager) {
         GraphsFragment graphsFragment = new GraphsFragment();
@@ -125,18 +91,5 @@ public class GraphsFragment extends Fragment {
         return graphsFragment;
     }
 
-    public class XAxisValueFormatter implements IAxisValueFormatter {
 
-        private String[] mValues = {"D", " D+", " C-", "C", " C+", " B-", "B", " B+", " A-", "A", " A+", " S-", "S", " S+"};
-
-        public XAxisValueFormatter() {
-
-        }
-
-        @Override
-        public String getFormattedValue(float value, AxisBase axis) {
-            // "value" represents the position of the label on the axis (x or y)
-            return mValues[(int) value];
-        }
-    }
 }

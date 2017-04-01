@@ -6,14 +6,10 @@ import adamzimnyy.com.leaguestats.api.endpoint.StaticDataService;
 import adamzimnyy.com.leaguestats.api.endpoint.SummonerService;
 import adamzimnyy.com.leaguestats.model.realm.Champion;
 import adamzimnyy.com.leaguestats.task.GetMostRecentMatchTask;
-import adamzimnyy.com.leaguestats.util.Score;
+import adamzimnyy.com.leaguestats.util.*;
 import adamzimnyy.com.leaguestats.model.riot.ChampionList;
 import adamzimnyy.com.leaguestats.model.riot.Image;
 import adamzimnyy.com.leaguestats.model.riot.Summoner;
-import adamzimnyy.com.leaguestats.util.ImageLoaderHelper;
-import adamzimnyy.com.leaguestats.util.IntentHelper;
-import adamzimnyy.com.leaguestats.util.Preference;
-import adamzimnyy.com.leaguestats.util.Riot;
 import adamzimnyy.com.leaguestats.view.AddMatchDialog;
 import adamzimnyy.com.leaguestats.view.ChampionItem;
 import android.content.SharedPreferences;
@@ -76,9 +72,10 @@ public class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
         setSupportActionBar(toolbar);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sharedPref.contains(Preference.SUMMONERS_NAME)){
-            Log.d("sharedPref",sharedPref.getString(Preference.SUMMONERS_NAME,"dupa"));
-            findSummonerId();}
+        if (sharedPref.contains(Preference.SUMMONERS_NAME)) {
+            Log.d("sharedPref", sharedPref.getString(Preference.SUMMONERS_NAME, "dupa"));
+            findSummonerId();
+        }
         tipCard.setVisibility(sharedPref.getBoolean(Preference.SHOW_PIN_TIP, false) ? View.VISIBLE : View.GONE);
         GridLayoutManager glm = new GridLayoutManager(MainActivity.this, 4);
         recyclerView.setHasFixedSize(true);
@@ -158,19 +155,10 @@ public class MainActivity extends AppCompatActivity {
         });
         ImageLoaderHelper.initialize(this);
         Realm.init(this);
-
-
-        //TODO ------->  Database Migration reset, remove when done !!!!!!!!!!!
         RealmConfiguration config = new RealmConfiguration.Builder()
-                .deleteRealmIfMigrationNeeded()
+             //   .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
-       /* Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.deleteAll();
-            }
-        });*/
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -193,28 +181,27 @@ public class MainActivity extends AppCompatActivity {
         String region = PreferenceManager.getDefaultSharedPreferences(this).getString(Preference.SERVER, "");
         String name = PreferenceManager.getDefaultSharedPreferences(this).getString(Preference.SUMMONERS_NAME, "");
         if (region.isEmpty()) return;
-        service.byName(region, name, Riot.API_KEY).enqueue(new Callback<Map<String,Summoner>>() {
+        service.byName(region, name, Riot.API_KEY).enqueue(new Callback<Map<String, Summoner>>() {
             @Override
-            public void onResponse(Call<Map<String,Summoner>> call, Response<Map<String,Summoner>> response) {
+            public void onResponse(Call<Map<String, Summoner>> call, Response<Map<String, Summoner>> response) {
                 if (response.isSuccessful()) {
-                    Map<String,Summoner> map = response.body();
-                    if(map.size() != 1) return;
+                    Map<String, Summoner> map = response.body();
+                    if (map.size() != 1) return;
                     Summoner s = null;
-                    for (Map.Entry<String, Summoner> e: map.entrySet())
-                    {
-                        s  = e.getValue();
+                    for (Map.Entry<String, Summoner> e : map.entrySet()) {
+                        s = e.getValue();
                     }
 
                     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putInt(Preference.SUMMONERS_ID, (int) s.getId());
                     editor.apply();
-                    Log.d("sharedPref","saved ID: "+(int) s.getId());
+                    Log.d("sharedPref", "saved ID: " + (int) s.getId());
                 }
             }
 
             @Override
-            public void onFailure(Call<Map<String,Summoner>> call, Throwable t) {
+            public void onFailure(Call<Map<String, Summoner>> call, Throwable t) {
 
             }
         });
@@ -244,9 +231,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     @OnClick(R.id.button_add_new_match)
-    public void onAddNewMatch(){
+    public void onAddNewMatch() {
         new AddMatchDialog().setActivity(this).show();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -333,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
                             champion = realm.createObject(Champion.class, ec.getKey());
                             champion.setName(ec.getName());
                             champion.setId(ec.getId());
-                            Log.d("champion","Set id "+ec.getId()+" on "+ec.getName());
+                            Log.d("champion", "Set id " + ec.getId() + " on " + ec.getName());
                             champion.setImage(realm.createObject(Image.class));
                             champion.getImage().setFull(ec.getImage().getFull());
                         }

@@ -54,7 +54,7 @@ public class GetRecentMatchesTask extends AsyncTask<Void, Void, RecentGames> {
     }
 
     @Override
-    protected void onPostExecute(RecentGames match) {
-        dialog.display(match);
+    protected void onPostExecute(RecentGames games) {
+        dialog.display(games);
     }
 }

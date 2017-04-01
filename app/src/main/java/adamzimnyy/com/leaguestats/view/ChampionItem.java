@@ -72,7 +72,7 @@ public class ChampionItem extends AbstractItem<ChampionItem, ChampionItem.ViewHo
         return R.layout.champion_list_item;
     }
 
-    //The logic to bind your data to the view
+    //The logic to bind your data to the root
     public void bindView(ViewHolder viewHolder, List<Object> payloads) {
         //call super so the selection is already handled for you
         super.bindView(viewHolder, payloads);
@@ -85,7 +85,7 @@ public class ChampionItem extends AbstractItem<ChampionItem, ChampionItem.ViewHo
         viewHolder.pin.setVisibility(pinned? View.VISIBLE : View.GONE);
     }
 
-    //reset the view here (this is an optional method, but recommended)
+    //reset the root here (this is an optional method, but recommended)
     @Override
     public void unbindView(ViewHolder holder) {
         super.unbindView(holder);

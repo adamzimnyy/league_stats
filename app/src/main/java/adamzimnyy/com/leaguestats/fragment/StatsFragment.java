@@ -57,7 +57,6 @@ public class StatsFragment extends Fragment {
         if (listener != null) listener.onSizeChanged();
 
         champion = Realm.getDefaultInstance().where(Champion.class).equalTo("key", key).findFirst();
-        Log.d("champion", "champion id in StatsFragment onViewCreated = "+champion.getId());
     }
 
     @Override

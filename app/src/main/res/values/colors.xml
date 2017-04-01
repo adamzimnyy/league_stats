@@ -14,6 +14,6 @@
     <color name="colorMasteryLight">#58cef2</color>
     <color name="colorMasteryDark">#164263</color>
     <color name="colorSaveButtonGreen">#77c924</color>
-
     <color name="verySlightyGrey">#efefef</color>
+    <color name="colorUpdateButtonYellow">#e4d020</color>
 </resources>
