@@ -1,23 +1,11 @@
 package adamzimnyy.com.leaguestats.activity;
 
-import adamzimnyy.com.leaguestats.R;
-import adamzimnyy.com.leaguestats.api.RetrofitBuilder;
-import adamzimnyy.com.leaguestats.api.endpoint.StaticDataService;
-import adamzimnyy.com.leaguestats.api.endpoint.SummonerService;
-import adamzimnyy.com.leaguestats.model.realm.Champion;
-import adamzimnyy.com.leaguestats.task.GetMostRecentMatchTask;
-import adamzimnyy.com.leaguestats.util.*;
-import adamzimnyy.com.leaguestats.model.riot.ChampionList;
-import adamzimnyy.com.leaguestats.model.riot.Image;
-import adamzimnyy.com.leaguestats.model.riot.Summoner;
-import adamzimnyy.com.leaguestats.view.AddMatchDialog;
-import adamzimnyy.com.leaguestats.view.ChampionItem;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,28 +16,49 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 import com.github.glomadrian.materialanimatedswitch.MaterialAnimatedSwitch;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.IItemAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
-import io.realm.*;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+
+import adamzimnyy.com.leaguestats.R;
+import adamzimnyy.com.leaguestats.api.RetrofitBuilder;
+import adamzimnyy.com.leaguestats.api.endpoint.StaticDataService;
+import adamzimnyy.com.leaguestats.api.endpoint.SummonerService;
+import adamzimnyy.com.leaguestats.model.realm.Champion;
+import adamzimnyy.com.leaguestats.model.riot.ChampionList;
+import adamzimnyy.com.leaguestats.model.riot.Image;
+import adamzimnyy.com.leaguestats.model.riot.Summoner;
+import adamzimnyy.com.leaguestats.util.ImageLoaderHelper;
+import adamzimnyy.com.leaguestats.util.IntentHelper;
+import adamzimnyy.com.leaguestats.util.Migration;
+import adamzimnyy.com.leaguestats.util.Preference;
+import adamzimnyy.com.leaguestats.util.Riot;
+import adamzimnyy.com.leaguestats.view.AddMatchDialog;
+import adamzimnyy.com.leaguestats.view.ChampionItem;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.*;
-
 public class MainActivity extends AppCompatActivity {
-
+    int schemaVersion = 3;
     Toolbar toolbar;
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
@@ -156,7 +165,9 @@ public class MainActivity extends AppCompatActivity {
         ImageLoaderHelper.initialize(this);
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder()
-             //   .deleteRealmIfMigrationNeeded()
+                .schemaVersion(schemaVersion)
+                .migration(new Migration())
+                //   .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
 

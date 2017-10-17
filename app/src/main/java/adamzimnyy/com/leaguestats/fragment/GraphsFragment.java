@@ -1,36 +1,20 @@
 package adamzimnyy.com.leaguestats.fragment;
 
 
-import adamzimnyy.com.leaguestats.activity.ChampionActivity;
-import adamzimnyy.com.leaguestats.fragment.card.GraphCard;
-import adamzimnyy.com.leaguestats.model.realm.Champion;
-import adamzimnyy.com.leaguestats.model.realm.Match;
-import adamzimnyy.com.leaguestats.util.SizeChangeListener;
-import adamzimnyy.com.leaguestats.view.CustomPager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import adamzimnyy.com.leaguestats.R;
-import android.widget.LinearLayout;
+import adamzimnyy.com.leaguestats.fragment.card.GraphCard;
+import adamzimnyy.com.leaguestats.util.SizeChangeListener;
+import adamzimnyy.com.leaguestats.view.CustomPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.formatter.DefaultValueFormatter;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import io.realm.Realm;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -79,7 +63,7 @@ LinearLayout root;
         ButterKnife.bind(this, v);
         masteryChart.setChampionKey(championKey);
         masteryChart.makeMasteryChart();
-        root.addView(masteryChart);
+        root.addView(masteryChart,0);
         return v;
     }
 

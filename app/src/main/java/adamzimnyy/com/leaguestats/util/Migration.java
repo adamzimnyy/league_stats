@@ -15,16 +15,24 @@ public class Migration implements RealmMigration {
         // DynamicRealm exposes an editable schema
         RealmSchema schema = realm.getSchema();
         if (oldVersion == 0) {
-            schema.create("Filter")
-                    .addField("fieldName", String.class)
-                    .addField("fieldType", String.class)
-                    .addField("value", String.class);
-            schema.get("Graph").removeField("filter")
-                    .addRealmListField("filters",schema.get("Filter"));
+            schema.get("Filter")
+                    .addField("gameField", boolean.class);
             oldVersion++;
+
+            //done
         }
 
-        if(oldVersion == 1){
+        if (oldVersion == 1) {
+            schema.get("Graph")
+                    .addField("fieldName", String.class);
+            oldVersion++;
+        }
+        if (oldVersion == 2) {
+            schema.get("Graph")
+                    .addField("gameField", boolean.class)
+                    .addField("statsField", boolean.class);
+            schema.get("Filter")
+                    .addField("statsField", boolean.class);
             oldVersion++;
         }
     }

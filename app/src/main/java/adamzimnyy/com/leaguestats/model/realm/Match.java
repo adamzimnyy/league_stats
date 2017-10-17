@@ -1,5 +1,6 @@
 package adamzimnyy.com.leaguestats.model.realm;
 
+import adamzimnyy.com.leaguestats.model.realm.graph.Graph;
 import adamzimnyy.com.leaguestats.model.riot.match.MatchDetail;
 import adamzimnyy.com.leaguestats.model.riot.recent.Game;
 import io.realm.Realm;
@@ -133,5 +134,20 @@ public class Match extends RealmObject {
         setChampionId(game.getChampionId());
         setId(game.getGameId());
         setChampionKey(champion != null ? champion.getKey() : "");
+    }
+
+    public class Field{
+
+        public static final String BLUE_SIDE = "blueSide";
+        public static final String WIN = "win";
+        public static final String MODE ="mode";
+        public static final String KILLS = "kills";
+        public static final String DEATHS = "deaths";
+        public static final String ASSISTS = "assists";
+        public static final String SCORE = "score";
+    }
+
+    public enum Test{
+
     }
 }

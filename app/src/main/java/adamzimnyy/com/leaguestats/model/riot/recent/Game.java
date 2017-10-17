@@ -25,86 +25,92 @@ import java.util.List;
 
 public class Game extends RealmObject implements Serializable {
 
-	private static final long serialVersionUID = 1228681223919935293L;
+    private static final long serialVersionUID = 1228681223919935293L;
 
-	private int championId;
-	private long createDate;
-	private RealmList<Player> fellowPlayers;
-	private long gameId;
-	private String gameMode;
-	private String gameType;
-	private boolean invalid;
-	private int ipEarned;
-	private int level;
-	private int mapId;
-	private int spell1;
-	private int spell2;
-	private RawStats stats;
-	private String subType;
-	private int teamId;
+    private int championId;
+    private long createDate;
+    private RealmList<Player> fellowPlayers;
+    private long gameId;
+    private String gameMode;
+    private String gameType;
+    private boolean invalid;
+    private int ipEarned;
+    private int level;
+    private int mapId;
+    private int spell1;
+    private int spell2;
+    private RawStats stats;
+    private String subType;
+    private int teamId;
 
-	public int getChampionId() {
-		return championId;
-	}
+    public int getChampionId() {
+        return championId;
+    }
 
-	public long getCreateDate() {
-		return createDate;
-	}
+    public long getCreateDate() {
+        return createDate;
+    }
 
-	public List<Player> getFellowPlayers() {
-		return fellowPlayers;
-	}
+    public List<Player> getFellowPlayers() {
+        return fellowPlayers;
+    }
 
-	public long getGameId() {
-		return gameId;
-	}
+    public long getGameId() {
+        return gameId;
+    }
 
-	public String getGameMode() {
-		return gameMode;
-	}
+    public String getGameMode() {
+        return gameMode;
+    }
 
-	public String getGameType() {
-		return gameType;
-	}
+    public String getGameType() {
+        return gameType;
+    }
 
-	public int getIpEarned() {
-		return ipEarned;
-	}
+    public int getIpEarned() {
+        return ipEarned;
+    }
 
-	public int getLevel() {
-		return level;
-	}
+    public int getLevel() {
+        return level;
+    }
 
-	public int getMapId() {
-		return mapId;
-	}
+    public int getMapId() {
+        return mapId;
+    }
 
-	public int getSpell1() {
-		return spell1;
-	}
+    public int getSpell1() {
+        return spell1;
+    }
 
-	public int getSpell2() {
-		return spell2;
-	}
+    public int getSpell2() {
+        return spell2;
+    }
 
-	public RawStats getStats() {
-		return stats;
-	}
+    public RawStats getStats() {
+        return stats;
+    }
 
-	public String getSubType() {
-		return subType;
-	}
+    public String getSubType() {
+        return subType;
+    }
 
-	public int getTeamId() {
-		return teamId;
-	}
+    public int getTeamId() {
+        return teamId;
+    }
 
-	public boolean isInvalid() {
-		return invalid;
-	}
+    public boolean isInvalid() {
+        return invalid;
+    }
 
-	@Override
-	public String toString() {
-		return getGameId() + " (" + getGameMode() + ")";
-	}
+    public class Field {
+
+        public static final String IP_EARNED = "ipEarned";
+        public static final String LEVEL = "level";
+        public static final String MAP = "mapId";
+        public static final String SPELL_1 = "spell1";
+        public static final String SPELL_2 = "spell2";
+        public static final String SUB_TYPE = "subType";
+        public static final String TEAM = "teamId";
+    }
 }
